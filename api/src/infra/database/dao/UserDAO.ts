@@ -1,6 +1,6 @@
 import DAO from "@domain/dao/DAO";
 import { UserModel } from "@domain/model";
-import { DatabaseTableNames, KnexTypeAdapter } from "../KnexAdapter";
+import { DatabaseTableNames, KnexTypeAdapter } from "@infra/database/KnexAdapter";
 
 export default class UserDAO implements DAO<UserModel> {
     private readonly tableName: string = DatabaseTableNames.USERS;
@@ -12,8 +12,11 @@ export default class UserDAO implements DAO<UserModel> {
 
         return savedUser;
     }
-    findById(id: number): Promise<UserModel> {
-        throw new Error("Method not implemented.");
+
+    async findById(userId: string): Promise<UserModel | null> {
+        const data = await this.connection<UserModel>(this.tableName).where({ userId }).first();
+        if (!data) return null;
+        return data;
     }
 
 }
